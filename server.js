@@ -44,7 +44,7 @@ db.on('connected', () => console.log('mongo connected: ', mongoLOC));
 db.on('disconnected', () => console.log('mongo disconnected'));
 
 const connectToDB = async () => {
-    const connection = await mongoose.connect(mongoLOC)
+    await mongoose.connect(mongoLOC)
     console.log('The connection with mongo is established');
 }
 connectToDB()
