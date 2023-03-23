@@ -78,27 +78,31 @@ app.get('/register', (req, res) => {
 })
 
 app.post('/register', async (req, res) => {
-    try {
-        const hashedPW = await bcrypt.hash(req.body.password, 10)
-        const user = {
-            name: req.body.name,
-            email: req.body.email,
-            password: hashedPW
-        }
-        const createdUser = await User.create(user)
-        if(createdUser) {
-            console.log('User created: ' + createdUser);
-        } else {
-            console.log('Error creating user');
-        }
-        res.redirect('/login')
-    } catch {
-        res.redirect('/register')
-    }
+    console.log('registering user...');
+    // try {
+    //     const hashedPW = await bcrypt.hash(req.body.password, 10)
+    //     const user = {
+    //         name: req.body.name,
+    //         email: req.body.email,
+    //         password: hashedPW
+    //     }
+    //     const createdUser = await User.create(user)
+    //     if(createdUser) {
+    //         console.log('User created: ' + createdUser);
+    //     } else {
+    //         console.log('Error creating user');
+    //     }
+    //     res.redirect('/login')
+    // } catch {
+    //     res.redirect('/register')
+    // }
 
 })
 
-app.get('/logout', )
+app.get('/logout', (req, res) => {
+    
+    res.redirect('/login') 
+})
 
 // DB CHECKS
 db.on('error', e => console.log(e.message + ' ERROR is Mongod not running?'));
