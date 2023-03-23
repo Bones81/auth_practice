@@ -8,7 +8,8 @@ const userSchema = new Schema({
     password: { type: String, required: true }
 })
 
-userSchema.plugin(passportLocalMongoose)
+const options = { usernameField: "email", usernameCaseInsensitive: true }
+userSchema.plugin(passportLocalMongoose, options)
 
 const User = mongoose.model('User', userSchema)
 

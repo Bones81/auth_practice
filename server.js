@@ -5,10 +5,12 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
+// const bcrypt = require('bcrypt')
+const crypto = require('crypto')
 const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
+
 
 //DATABASE SETUP
 const db = mongoose.connection
@@ -19,21 +21,28 @@ const mongoLOC = 'mongodb://localhost:27017/'+'auth_practice'
 // VALUES FROM OTHER FILES
 const PORT = process.env.PORT
 const User = require('./models/users')
-const initializePassport = require('./passport-config')
-initializePassport(
-    passport, 
-    async (email) => { 
-        const user = await User.findOne({ email: email })
-        console.log('User found: ' + user.name, user.email);
-        return user
-    },
-    async (id) => {
-        const user = await User.findById(id)
-        console.log('User found by id: ' + user);
-        return user
-    }
+// const initializePassport = require('./passport-config')
+// initializePassport(
+//     passport, 
+//     async (email) => { 
+//         const user = await User.findOne({ email: email })
+//         console.log('User found: ' + user.name, user.email);
+//         return user
+//     },
+//     async (id) => {
+//         const user = await User.findById(id)
+//         console.log('User found by id: ' + user);
+//         return user
+//     }
     
-)
+// )
+
+//PASSPORT CONFIG
+passport.use(User.createStrategy());
+
+passport.serializeUser(User.serializeUser())
+passport.deserializeUser(User.deserializeUser())
+
 
 // MIDDLEWARE
 app.set('view-engine', 'ejs')
