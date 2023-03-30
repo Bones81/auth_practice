@@ -9,6 +9,8 @@ const flash = require('express-flash')
 const session = require('express-session')
 const LocalStrategy = require('passport-local').Strategy
 
+const authRouter = require('./controllers/auth')
+
 //DATABASE SETUP
 const db = mongoose.connection
 //if this were a deployed app, there would be a .env value for a Mongo Atlas connection string
@@ -32,6 +34,8 @@ app.use(session({
 app.use(passport.initialize()) // sets up some basics of passport
 app.use(passport.session()) // since we want to store our variables to be persisted across entire session, works with app.use(session) above.
 
+app.use('/', authRouter)
+
 //PASSPORT CONFIG
 // passport.use(); //FIX THIS
 
@@ -39,44 +43,46 @@ app.use(passport.session()) // since we want to store our variables to be persis
 // passport.deserializeUser(User.deserializeUser())
 
 
+
 //ROUTES
 app.get('/', (req, res) => {
-    res.render('index.ejs', { name: "User name here" }) 
+    const user = req.user || "No user found"
+    res.render('index.ejs', { user: user}) 
 })
 
-app.get('/login', (req, res) => {
-    res.render('login.ejs', {
-        user: req.user, message: req.flash('error') // i think this handles situation where user already logged in?
-    }) 
-})
+// app.get('/login', (req, res) => {
+//     res.render('login.ejs', {
+//         user: req.user, message: req.flash('error') // i think this handles situation where user already logged in?
+//     }) 
+// })
 
-app.post('/login', /* pass in proper email and password values here, followed by a function which generates the appropriate response */ passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/login', 
-    failureFlash: true // displays error messages noted in passport-config.js
-}))
+// app.post('/login', /* pass in proper email and password values here, followed by a function which generates the appropriate response */ passport.authenticate('local', {
+//     successRedirect: '/',
+//     failureRedirect: '/login', 
+//     failureFlash: true // displays error messages noted in passport-config.js
+// }))
 
-app.get('/register', (req, res) => {
-    res.render('register.ejs') 
-})
+// app.get('/register', (req, res) => {
+//     res.render('register.ejs') 
+// })
 
-app.post('/register', async (req, res) => {
-    // ensure approved credentials
-    // if user already exists, throw err
-    // create new user
-    const user = await User.create({name: "Example", email: "example@example.com", password: "examplePW"})
+// app.post('/register', async (req, res) => {
+//     // ensure approved credentials
+//     // if user already exists, throw err
+//     // create new user
+//     const user = await User.create({name: req.body.name, email: req.body.email, password: req.body.password})
 
-    res.json(user)
-}) 
+//     res.json(user)
+// }) 
 
-app.get('/logout', (req, res, next) => {
-    console.log('logout route activated');
-    req.logout( (err) => {
-        if (err) return next(err)
-        req.flash('success_msg', 'session terminated')
-        res.redirect('/') 
-    })
-})
+// app.get('/logout', (req, res, next) => {
+//     console.log('logout route activated');
+//     req.logout( (err) => {
+//         if (err) return next(err)
+//         req.flash('success_msg', 'session terminated')
+//         res.redirect('/') 
+//     })
+// })
 
 // DB CHECKS
 db.on('error', e => console.log(e.message + ' ERROR is Mongod not running?'));
