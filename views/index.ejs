@@ -1,4 +1,4 @@
-<h1>Hi,  <%=typeof user === "object" ? user.name : user %></h1>
+<h1>Hi,  <%=typeof user === "object" ? user.username : user %></h1>
 <h2>Session ID: <%= sessionID || "Session ID Not Found" %></h2>
 <% if ((typeof user) === "string") { %>
     <a href="/register">Register</a>

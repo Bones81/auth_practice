@@ -32,6 +32,11 @@ passport.use(strategy)
 passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
+router.get('/', (req, res) => {
+    const user = req.user || "No user found"
+    const sessionID = req.sessionID || "No sessionID found"
+    res.render('index.ejs', { user: user, sessionID: sessionID }) 
+})
 
 router.get('/login', (req, res, next) => {
     res.render('login.ejs') 
@@ -49,7 +54,7 @@ router.post('/login',
 
 router.get('/login-failure', (req, res, next) => {
     console.log(req.session);
-    res.render('/login-failure') 
+    res.render('login-failure.ejs') 
 })
 
 router.get('/secret', (req, res, next) => {

@@ -58,12 +58,7 @@ app.use('/', authRouter)
 
 
 
-//ROUTES
-app.get('/', (req, res) => {
-    const user = req.user || "No user found"
-    const sessionID = req.sessionID || "No sessionID found"
-    res.render('index.ejs', { user: user, sessionID: sessionID }) 
-})
+// ROUTES -- ALL ROUTES ROUTED THROUGH AUTHROUTER
 
 
 
