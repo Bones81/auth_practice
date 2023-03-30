@@ -43,7 +43,7 @@ app.use(session({
     resave: false, // should we resave session variables if nothing has changed?
     saveUninitialized: false, // want to save an empty value in the session if there is no value?
     store: store, // where to save sessionIDs
-    cookie: { maxAge: 1000 * 30 }
+    cookie: { maxAge: 1000 * 60 * 60 }
 }))
 app.use(passport.initialize()) // sets up some basics of passport
 app.use(passport.session()) // allows you to use express-session with passport; since we want to store our variables to be persisted across entire session, works with app.use(session) above.

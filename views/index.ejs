@@ -1,9 +1,9 @@
-<h1>Hi,  <%=typeof user === "object" ? user.username : user %></h1>
+<h1>Hi <%=typeof user === "object" ? user && user.username : null %>,</h1>
 <h2>Session ID: <%= sessionID || "Session ID Not Found" %></h2>
-<% if ((typeof user) === "string") { %>
+<% if (user) { %>
+    <a href="/logout">Log Out</a>
+<% } else { %>
     <a href="/register">Register</a>
     or 
     <a href="/login">Log In</a>
-<% } else { %>
-    <a href="/logout">Log Out</a>
 <% } %>
