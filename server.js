@@ -5,29 +5,28 @@ const app = express()
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const passport = require('passport')
-const flash = require('express-flash')
+// const flash = require('express-flash')
 const session = require('express-session')
+const { v4: uuidv4 } = require('uuid')
 const MongoStore = require('connect-mongo')
 const LocalStrategy = require('passport-local').Strategy
 
 const authRouter = require('./controllers/auth')
 
 //DATABASE SETUP
-const db = mongoose.connection
 //if this were a deployed app, there would be a .env value for a Mongo Atlas connection string
 //but since this is just practice, the localhost variant is fine
 const mongoLOC = 'mongodb://localhost:27017/'+'auth_practice'
+mongoose.connect(mongoLOC) // connect to db
 
+const store = MongoStore.create({ mongoUrl: mongoLOC })
+// console.log(store)
+
+const db = mongoose.connection
 // DB CHECKS
 db.on('error', e => console.log(e.message + ' ERROR is Mongod not running?'));
 db.on('connected', () => console.log('mongo connected: ', mongoLOC));
 db.on('disconnected', () => console.log('mongo disconnected'));
-
-const connectToDB = async () => {
-    await mongoose.connect(mongoLOC)
-    console.log('The connection with mongo is established');
-}
-connectToDB()
 
 // VALUES FROM OTHER FILES
 const PORT = process.env.PORT
@@ -37,15 +36,17 @@ const User = require('./models/users')
 app.set('view-engine', 'ejs')
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-app.use(flash())
+// app.use(flash())
 app.use(session({
+    genid: (req) => { return uuidv4() },
     secret: process.env.SESSION_SECRET,
     resave: false, // should we resave session variables if nothing has changed?
     saveUninitialized: false, // want to save an empty value in the session if there is no value?
-    store: MongoStore.create({ mongoUrl: mongoLOC }) // where to save sessionIDs
+    store: store, // where to save sessionIDs
+    cookie: { maxAge: 1000 * 30 }
 }))
 app.use(passport.initialize()) // sets up some basics of passport
-app.use(passport.session()) // since we want to store our variables to be persisted across entire session, works with app.use(session) above.
+app.use(passport.session()) // allows you to use express-session with passport; since we want to store our variables to be persisted across entire session, works with app.use(session) above.
 
 app.use('/', authRouter)
 
@@ -60,8 +61,11 @@ app.use('/', authRouter)
 //ROUTES
 app.get('/', (req, res) => {
     const user = req.user || "No user found"
-    res.render('index.ejs', { user: user }) 
+    const sessionID = req.sessionID || "No sessionID found"
+    res.render('index.ejs', { user: user, sessionID: sessionID }) 
 })
+
+
 
 // app.get('/login', (req, res) => {
 //     res.render('login.ejs', {
